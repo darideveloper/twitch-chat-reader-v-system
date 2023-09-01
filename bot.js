@@ -1,5 +1,4 @@
 const tmi = require('tmi.js')
-const { saveLog } = require('./logs')
 const { pool } = require('./db')
 
 // Get enviroment variables
