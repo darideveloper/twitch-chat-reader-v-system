@@ -1,5 +1,4 @@
 import dotenv from 'dotenv'
-import bot from './bot.js'
 
 // Load crdentials from .env
 dotenv.config()
@@ -10,8 +9,9 @@ const HOST_V_SYSTEM = process.env.HOST_V_SYSTEM
 const TOKEN_STREAMS = process.env.TOKEN_STREAMS
 const TOKEN_COMMENTS = process.env.TOKEN_COMMENTS
 
-function getStraems() {
+export async function getStraems() {
 
+  // Query data
   var headers = new Headers();
   headers.append("token", TOKEN_STREAMS);
   
@@ -21,18 +21,51 @@ function getStraems() {
     redirect: 'follow'
   };
   
-  fetch(`http://${HOST_V_SYSTEM}:8000/streams/current-streams/`, requestOptions)
-    .then(response => response.json())
-    .then(result => {
+  const res = await fetch(`http://${HOST_V_SYSTEM}:8000/streams/current-streams/`, requestOptions)
+  const resJson = await res.json()  
+  
+  // Filter active streams
+  let currentStreams = resJson.data.filter(stream => {
+    return stream["is_active"] == true
+  })
 
-      // Start chat reader
-      const streams = result.data
-      for (const stream of streams) {
-        bot.read_chat(stream).then((res) => {console.log (`stream ${stream.user_name} ended`)})
-      }
+  // Format streams
+  currentStreams = resJson.data.map (stream => {
+    return {
+      streamer: stream["streamer"],
+      endTime: stream["end_time"],
+      accessToken: stream["access_token"],
+    }
+  })
 
-    })
-    .catch(error => console.log('error', error));
+  return currentStreams
 }
 
-getStraems()
+export async function getMods() {
+
+  // Query data
+  var headers = new Headers();
+  headers.append("token", TOKEN_COMMENTS);
+  
+  var requestOptions = {
+    method: 'GET',
+    headers: headers,
+    redirect: 'follow'
+  };
+  
+  const res = await fetch(`http://${HOST_V_SYSTEM}:8000/comments/mods/`, requestOptions)
+  const resJson = await res.json()
+
+  // Filter active mods
+  let mods = resJson.data.filter(mod => {
+    return mod["is_active"] == true
+  })
+
+  // Format mods
+  mods = mods.map (mod => {
+    return mod["user"]
+  })
+
+  return resJson.data
+
+}
