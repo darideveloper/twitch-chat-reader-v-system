@@ -66,6 +66,6 @@ export async function getMods() {
     return mod["user"]
   })
 
-  return resJson.data
+  return mods
 
 }
