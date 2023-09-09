@@ -16,11 +16,16 @@ async function onMessageHandler(target, context, comment, mods) {
 
   try {
 
-    // Check if is not a mod comment
-    if (!mods.includes(context.username)) {
+    // Get mod of comment
+    let currentMods = mods.filter(mod => {
+      return mod["user"] == context.username
+    })
+    if (currentMods.length == 0) {
       console.log (`${target} - ${context.username}: (skipped: not mod) ${comment}`)
       return null
     }
+
+    let currentMod = currentMods[0]
 
     // Clean comment
     comment = comment.replace("'", "").replace('"', '').replace(';', '').replace('`', '').replace('\\', '').replace('/', '').replace('%', '').replace('&', '').replace('<', '').replace('>', '').replace('=', '').replace('+', '').replace('-', '').replace('_', '').replace('*', '').replace('#', '').replace('@', '')
@@ -28,7 +33,7 @@ async function onMessageHandler(target, context, comment, mods) {
     console.log(`* ${target} - ${context.username}: ${comment}`)
 
     // Send comment to bot api
-    sendComment (target, context.username, comment)
+    sendComment (target.replace("#", ""), currentMod.id, comment)
 
   } catch (error) {
 
