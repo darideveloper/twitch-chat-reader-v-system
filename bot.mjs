@@ -1,4 +1,5 @@
 import tmi from 'tmi.js'
+import { sendComment } from './api.mjs'
 
 // Called every time a message comes in
 async function onMessageHandler(target, context, comment, mods) {
@@ -26,7 +27,8 @@ async function onMessageHandler(target, context, comment, mods) {
 
     console.log(`* ${target} - ${context.username}: ${comment}`)
 
-    // TODO: Send comment to bot api
+    // Send comment to bot api
+    sendComment (target, context.username, comment)
 
   } catch (error) {
 
@@ -79,24 +81,9 @@ export async function readChat(stream, mods) {
   endTime = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${endTime}`
   const waitTime = parseInt((new Date(endTime) - now))
 
-  // wait 1 second
-  
-
+  // wait until end time
   setTimeout(() => {
     console.log (`disconnecting ${userName}`)
-    // client.disconnect()
+    client.disconnect()
   }, waitTime)
-  // const minutes = parseInt((end_date - now_date) / 1000 / 60)
-
-  // // Get hours as HH:MM
-  // const now_time = `${now_date.getHours()}:${now_date.getMinutes()}`
-  // const end_time = `${end_date.getHours()}:${end_date.getMinutes()}`
-
-  // // Log times
-  // saveLog(`* ${userName} - starting: ${now_time} - ending: ${end_time} - minutes: ${minutes}`)
-
-  // // Close connection after wait time
-  // await sleep(minutes * 60 * 1000)
-  // client.disconnect()
-  // return "done"
 }

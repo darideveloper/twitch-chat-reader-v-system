@@ -1,4 +1,5 @@
 import dotenv from 'dotenv'
+import { json } from 'express'
 
 // Load crdentials from .env
 dotenv.config()
@@ -21,7 +22,7 @@ export async function getStraems() {
     redirect: 'follow'
   };
   
-  const res = await fetch(`http://${HOST_V_SYSTEM}:8000/streams/current-streams/`, requestOptions)
+  const res = await fetch(`${HOST_V_SYSTEM}/streams/current-streams/`, requestOptions)
   const resJson = await res.json()  
   
   // Filter active streams
@@ -53,7 +54,7 @@ export async function getMods() {
     redirect: 'follow'
   };
   
-  const res = await fetch(`http://${HOST_V_SYSTEM}:8000/comments/mods/`, requestOptions)
+  const res = await fetch(`${HOST_V_SYSTEM}/comments/mods/`, requestOptions)
   const resJson = await res.json()
 
   // Filter active mods
@@ -68,4 +69,29 @@ export async function getMods() {
 
   return mods
 
+}
+
+export async function sendComment(streamer, mod, comment) {
+
+  // Submit data data  
+  var headers = new Headers();
+  headers.append("Content-Type", "application/json");
+
+  var requestOptions = {
+    method: 'POST',
+    redirect: 'follow',
+    headers: headers,
+    body: JSON.stringify({
+      streamer,
+      mod,
+      comment
+    }),
+  };
+  
+  const res = await fetch(`${HOST_BOT}/comment/`, requestOptions)
+  const resJson = await res.json()
+
+  if (resJson.status != "ok") {
+    throw new Error(resJson.message)
+  }
 }
