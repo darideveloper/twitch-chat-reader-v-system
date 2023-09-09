@@ -1,7 +1,8 @@
-import { getStraems, getMods } from './api.mjs'
+import { getStraems, getMods, startBots } from './api.mjs'
 import { readChat } from './bot.mjs'
 
 async function main() {
+
   
   // Get current live streams
   const currentStreams = await getStraems()
@@ -11,6 +12,9 @@ async function main() {
     console.log("No streams found")
     return ""
   }
+  
+  // Start bot in phantom comments
+  startBots ()
 
   // Loop each stream
   currentStreams.forEach(async (stream) => {
