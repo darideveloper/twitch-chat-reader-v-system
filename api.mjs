@@ -66,14 +66,17 @@ export async function getMods() {
 
   // Format mods
   mods = mods.map(mod => {
-    return mod["user"]
+    return {
+      "user": mod["user"],
+      "id": mod["id"]
+    } 
   })
 
   return mods
 
 }
 
-export async function sendComment(streamer, mod, comment) {
+export async function sendComment(streamer, idMod, comment) {
   // Submit mod comment to Phantom Comments
 
   // Submit data data  
@@ -86,10 +89,11 @@ export async function sendComment(streamer, mod, comment) {
     headers: headers,
     body: JSON.stringify({
       streamer,
-      mod,
+      "mod": idMod,
       comment
     }),
   }
+
 
   const res = await fetch(`${HOST_BOT}/comment/`, requestOptions)
   const resJson = await res.json()
